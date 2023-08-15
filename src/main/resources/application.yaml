@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ajun_db
+    username: root
+    password: asjun6425
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: false
+
+
