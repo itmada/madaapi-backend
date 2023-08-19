@@ -16,9 +16,21 @@ import org.springframework.util.DigestUtils;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import static com.mada.madaapibackend.constant.UserConstant.ADMIN_ROLE;
 import static com.mada.madaapibackend.constant.UserConstant.USER_LOGIN_STATE;
 
 
+/**
+ * @author mada
+ * @description 针对表【user(用户)】的数据库操作Service
+ * @createDate 2023-07-28 20:39:07
+ * 用户服务实现
+ * 1）用户注册
+ * 2）用户登录
+ * 3）获取当前用户
+ * 4）判断是否为管理员
+ * 5）用户注销
+ */
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
@@ -31,6 +43,13 @@ public class UserServiceImpl implements UserService {
      */
     public static final String SALT = "itmada";
 
+    /**
+     * 用户注册
+     * @param userAccount 账户
+     * @param userPassword 密码
+     * @param checkPassword 校验密码
+     * @return 用户id
+     */
     @Override
     public long userRegister(String userAccount, String userPassword, String checkPassword) {
         //1.校验
@@ -106,6 +125,13 @@ public class UserServiceImpl implements UserService {
         return user.getId();
     }
 
+    /**
+     * 用户登录
+     * @param userAccount 用户账户
+     * @param userPassword 用户密码
+     * @param request 登录请求
+     * @return 脱敏用户
+     */
     @Override
     public User userLogin(String userAccount, String userPassword, HttpServletRequest request) {
         //1.校验
@@ -165,18 +191,47 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    /**
+     * 获取当前用户
+     * @param request 当前请求
+     * @return 脱敏用户
+     */
     @Override
     public User getCurrentUser(HttpServletRequest request) {
-        return null;
+        //获取当前登录用户
+        Object user = request.getSession().getAttribute(USER_LOGIN_STATE);
+        User currentUser = (User) user;
+        if(currentUser == null || currentUser.getId() == null){
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR,"未登录");
+        }
+        return currentUser;
     }
 
+    /**
+     * 判断用户是否为管理员
+     * @param request 单前请求
+     * @return 是与否
+     */
     @Override
     public boolean isAdmin(HttpServletRequest request) {
-        return false;
+        //获取用户的登录状态
+        Object user = request.getSession().getAttribute(USER_LOGIN_STATE);
+        User currentUser = (User) user;
+        return currentUser!=null && ADMIN_ROLE.equals(currentUser.getUserRole());
     }
 
+    /**
+     * 用户注销
+     * @param request 当前请求
+     * @return ture
+     */
     @Override
     public boolean useLogout(HttpServletRequest request) {
-        return false;
+        if(request.getSession().getAttribute(USER_LOGIN_STATE) == null){
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR,"未登录");
+        }
+        //移除登录状态
+        request.getSession().removeAttribute(USER_LOGIN_STATE);
+        return true;
     }
 }

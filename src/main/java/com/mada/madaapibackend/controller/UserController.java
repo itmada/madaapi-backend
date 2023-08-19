@@ -14,12 +14,21 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * 用户接口
+ * @author itmada
+ */
 @RestController
 @RequestMapping("/user")
 public class UserController {
     @Resource
     private UserService userService;
 
+    /**
+     * 用户注册
+     * @param requestBody 封装的请求
+     * @return 自定义响应
+     */
     @PostMapping("/register")
     public BaseResponse<Long> register(@RequestBody UserRegisterRequest requestBody) {
         if (requestBody == null) {
@@ -37,6 +46,12 @@ public class UserController {
     }
 
 
+    /**
+     * 用户登录
+     * @param loginRequest 封装的请求
+     * @param request 当前请求
+     * @return 封装的响应
+     */
     @PostMapping("/login")
     public BaseResponse<User> login(@RequestBody UserLoginRequest loginRequest, HttpServletRequest request) {
         if (loginRequest == null) {

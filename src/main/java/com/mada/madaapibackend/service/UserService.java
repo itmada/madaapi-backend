@@ -13,9 +13,42 @@ import javax.servlet.http.HttpServletRequest;
 */
 
 public interface UserService {
-    public long userRegister(String userAccount,String userPassword,String checkPassword);
-    public User userLogin(String userAccount, String userPassword, HttpServletRequest request);
-    public User getCurrentUser(HttpServletRequest request);
-    public boolean isAdmin(HttpServletRequest request);
-    public boolean useLogout(HttpServletRequest request );
+    /**
+     * 用户注册
+     * @param userAccount 账户
+     * @param userPassword 密码
+     * @param checkPassword 校验密码
+     * @return 用户id
+     */
+    long userRegister(String userAccount,String userPassword,String checkPassword);
+
+    /**
+     * 用户登录
+     * @param userAccount 用户账户
+     * @param userPassword 用户密码
+     * @param request 登录请求
+     * @return 脱敏用户
+     */
+    User userLogin(String userAccount, String userPassword, HttpServletRequest request);
+
+    /**
+     * 获取当前用户
+     * @param request 当前请求
+     * @return 脱敏用户
+     */
+    User getCurrentUser(HttpServletRequest request);
+
+    /**
+     * 判断用户是否为管理员
+     * @param request 单前请求
+     * @return 是与否
+     */
+    boolean isAdmin(HttpServletRequest request);
+
+    /**
+     * 用户注销
+     * @param request 当前请求
+     * @return ture
+     */
+    boolean useLogout(HttpServletRequest request );
 }
