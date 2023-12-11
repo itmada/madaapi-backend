@@ -9,4 +9,8 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: false
 
+server:
+  servlet:
+    context-path: /api
+
 

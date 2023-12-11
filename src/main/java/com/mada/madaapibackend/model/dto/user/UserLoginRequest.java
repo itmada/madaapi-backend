@@ -1,4 +1,4 @@
-package com.mada.madaapibackend.model.dto;
+package com.mada.madaapibackend.model.dto.user;
 
 import lombok.Data;
 

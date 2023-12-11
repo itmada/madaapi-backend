@@ -23,6 +23,11 @@ public class Interfaceinfo implements Serializable {
     private Long id;
 
     /**
+     * 创建人
+     */
+    private Long userId;
+
+    /**
      * 接口名称
      */
     private String name;
@@ -42,6 +47,10 @@ public class Interfaceinfo implements Serializable {
      */
     private String method;
 
+    /**
+     * 请求参数
+     */
+    private String requestParams;
     /**
      * 状态
      */

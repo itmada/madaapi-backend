@@ -12,7 +12,7 @@ class UserServiceImplTest {
 
     @Test
     void userRegister() {
-        String account = "itmada123";
+        String account = "itmada1234";
         String password = "12345678";
         String checkPassword = "12345678";
         userService.userRegister(account,password,checkPassword);

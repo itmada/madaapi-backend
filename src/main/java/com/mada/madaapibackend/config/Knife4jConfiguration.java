@@ -12,15 +12,15 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 @Configuration
 @EnableSwagger2WebMvc
 public class Knife4jConfiguration {
-
     @Bean(value = "dockerBean")
     public Docket dockerBean() {
         //指定使用Swagger2规范
         Docket docket=new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(new ApiInfoBuilder()
+                .title("CodingMada")
                 //描述字段支持Markdown语法
                 .description("API 开放接口调用平台")
-                .termsOfServiceUrl("https://github.com/mada828")
+                .termsOfServiceUrl("https://github.com/itmada")
                 .contact("pityjun@gmail.com")
                 .version("1.0")
                 .build())

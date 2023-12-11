@@ -1,8 +1,8 @@
 package com.mada.madaapibackend.service;
 
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.mada.madaapibackend.model.entity.User;
-import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 * @createDate 2023-07-28 20:39:07
 */
 
-public interface UserService {
+public interface UserService extends IService<User> {
     /**
      * 用户注册
      * @param userAccount 账户
@@ -36,7 +36,7 @@ public interface UserService {
      * @param request 当前请求
      * @return 脱敏用户
      */
-    User getCurrentUser(HttpServletRequest request);
+    User getLoginUser(HttpServletRequest request);
 
     /**
      * 判断用户是否为管理员

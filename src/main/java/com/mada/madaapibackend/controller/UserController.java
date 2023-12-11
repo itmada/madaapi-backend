@@ -4,11 +4,13 @@ import com.mada.madaapibackend.common.BaseResponse;
 import com.mada.madaapibackend.common.ErrorCode;
 import com.mada.madaapibackend.common.ResultUtils;
 import com.mada.madaapibackend.exception.BusinessException;
-import com.mada.madaapibackend.model.dto.UserLoginRequest;
-import com.mada.madaapibackend.model.dto.UserRegisterRequest;
+import com.mada.madaapibackend.model.dto.user.UserLoginRequest;
+import com.mada.madaapibackend.model.dto.user.UserRegisterRequest;
 import com.mada.madaapibackend.model.entity.User;
+import com.mada.madaapibackend.model.vo.UserVO;
 import com.mada.madaapibackend.service.UserService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -67,4 +69,30 @@ public class UserController {
         return ResultUtils.success(user);
     }
 
+    /**
+     * 获取登录用户
+     * @param request
+     * @return
+     */
+    @GetMapping("/get/login")
+    public BaseResponse<UserVO> getLoginUser(HttpServletRequest request){
+        User user = userService.getLoginUser(request);
+        UserVO userVO = new UserVO();
+        BeanUtils.copyProperties(user, userVO);
+        return ResultUtils.success(userVO);
+    }
+
+    /**
+     * 用户登出
+     * @param request
+     * @return
+     */
+    @PostMapping("/logout")
+    public BaseResponse<Boolean> userLogout(HttpServletRequest request){
+        if(request == null){
+            throw new BusinessException(ErrorCode.PARAM_ERROR);
+        }
+        boolean b = userService.useLogout(request);
+        return ResultUtils.success(b);
+    }
 }

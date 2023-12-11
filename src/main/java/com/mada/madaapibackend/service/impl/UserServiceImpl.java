@@ -2,6 +2,7 @@ package com.mada.madaapibackend.service.impl;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mada.madaapibackend.exception.BusinessException;
 import com.mada.madaapibackend.common.ErrorCode;
 import com.mada.madaapibackend.mapper.UserMapper;
@@ -33,7 +34,7 @@ import static com.mada.madaapibackend.constant.UserConstant.USER_LOGIN_STATE;
  */
 @Service
 @Slf4j
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl  extends ServiceImpl<UserMapper,User> implements UserService {
 
     @Resource
     UserMapper userMapper;
@@ -45,8 +46,9 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 用户注册
-     * @param userAccount 账户
-     * @param userPassword 密码
+     *
+     * @param userAccount   账户
+     * @param userPassword  密码
      * @param checkPassword 校验密码
      * @return 用户id
      */
@@ -106,7 +108,7 @@ public class UserServiceImpl implements UserService {
         }
 
         //2.加密
-        String encryptPassword = DigestUtils.md5DigestAsHex((SALT +userPassword).getBytes());
+        String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
 
         //3.分配秘钥
         String accessKey = DigestUtils.md5DigestAsHex((SALT + userAccount + RandomStringUtils.random(5)).getBytes());
@@ -127,9 +129,10 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 用户登录
-     * @param userAccount 用户账户
+     *
+     * @param userAccount  用户账户
      * @param userPassword 用户密码
-     * @param request 登录请求
+     * @param request      登录请求
      * @return 脱敏用户
      */
     @Override
@@ -175,40 +178,38 @@ public class UserServiceImpl implements UserService {
         //2.对密码进行加密，并查询用户是否存在
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("userAccount",userAccount);
-        queryWrapper.eq("userPassword",encryptPassword);
-        System.out.println(userAccount+":"+encryptPassword);
+        queryWrapper.eq("userAccount", userAccount);
+        queryWrapper.eq("userPassword", encryptPassword);
         User user = userMapper.selectOne(queryWrapper);
-        if(user == null){
+        if (user == null) {
             log.info("Login failed,userAccount or user Password is not matched");
-            throw new BusinessException(ErrorCode.PARAM_ERROR,"用户名或密码错误");
+            throw new BusinessException(ErrorCode.PARAM_ERROR, "用户名或密码错误");
         }
         //记录用户状态
-        request.getSession().setAttribute(USER_LOGIN_STATE,user);
-
-        //3.信息脱敏
-        user.setUserPassword(null);
+        request.getSession().setAttribute(USER_LOGIN_STATE, user);
         return user;
     }
 
     /**
      * 获取当前用户
+     *
      * @param request 当前请求
-     * @return 脱敏用户
+     * @return 用户
      */
     @Override
-    public User getCurrentUser(HttpServletRequest request) {
+    public User getLoginUser(HttpServletRequest request) {
         //获取当前登录用户
         Object user = request.getSession().getAttribute(USER_LOGIN_STATE);
         User currentUser = (User) user;
-        if(currentUser == null || currentUser.getId() == null){
-            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR,"未登录");
+        if (currentUser == null || currentUser.getId() == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR, "未登录");
         }
         return currentUser;
     }
 
     /**
      * 判断用户是否为管理员
+     *
      * @param request 单前请求
      * @return 是与否
      */
@@ -217,18 +218,19 @@ public class UserServiceImpl implements UserService {
         //获取用户的登录状态
         Object user = request.getSession().getAttribute(USER_LOGIN_STATE);
         User currentUser = (User) user;
-        return currentUser!=null && ADMIN_ROLE.equals(currentUser.getUserRole());
+        return currentUser != null && ADMIN_ROLE.equals(currentUser.getUserRole());
     }
 
     /**
      * 用户注销
+     *
      * @param request 当前请求
      * @return ture
      */
     @Override
     public boolean useLogout(HttpServletRequest request) {
-        if(request.getSession().getAttribute(USER_LOGIN_STATE) == null){
-            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR,"未登录");
+        if (request.getSession().getAttribute(USER_LOGIN_STATE) == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR, "未登录");
         }
         //移除登录状态
         request.getSession().removeAttribute(USER_LOGIN_STATE);
