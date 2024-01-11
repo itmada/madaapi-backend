@@ -7,15 +7,11 @@ import com.mada.madaapibackend.common.ErrorCode;
 import com.mada.madaapibackend.common.ResultUtils;
 import com.mada.madaapibackend.constant.CommonSortConstant;
 import com.mada.madaapibackend.exception.BusinessException;
-import com.mada.madaapibackend.model.dto.interfaceInfo.InterfaceInfoDeleteRequest;
-import com.mada.madaapibackend.model.dto.interfaceInfo.InterfaceInfoQueryRequest;
-import com.mada.madaapibackend.model.dto.interfaceInfo.InterfaceInfoUpdateRequest;
+import com.mada.madaapibackend.model.dto.interfaceInfo.*;
 import com.mada.madaapibackend.model.entity.Interfaceinfo;
-import com.mada.madaapibackend.model.dto.interfaceInfo.InterfaceInfoAddRequest;
 import com.mada.madaapibackend.model.entity.User;
 import com.mada.madaapibackend.service.InterfaceinfoService;
 import com.mada.madaapibackend.service.UserService;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
@@ -142,6 +138,27 @@ public class InterfaceInfoController {
         queryWrapper.orderBy(StringUtils.isNotBlank(sortField), sortOrder.equals(CommonSortConstant.ORDER_FOR_ASC),sortField);
         Page<Interfaceinfo> interfaceinfoPage = interfaceinfoService.page(new Page<>(current,pageSize), queryWrapper);
         return ResultUtils.success(interfaceinfoPage);
+    }
+
+    @PostMapping("/offline")
+    public BaseResponse<Boolean> offlineInterfaceInfo(@RequestBody InterfaceInfoIdRequest idRequest, HttpServletRequest request){
+        //简单校验
+        if(idRequest == null || idRequest.getId() <=0){
+            throw new BusinessException(ErrorCode.PARAM_ERROR);
+        }
+
+        Long id = idRequest.getId();
+        //接口是否实际存在
+        Interfaceinfo oldInterfaceInfo = interfaceinfoService.getById(id);
+        if(oldInterfaceInfo == null){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+
+        Interfaceinfo interfaceinfo = new Interfaceinfo();
+        interfaceinfo.setId(id);
+        interfaceinfo.setStatus();
+        boolean result = interfaceinfoService.updateById(interfaceinfo);
+        return ResultUtils.success(result);
     }
 
 }
